@@ -47,10 +47,16 @@ type TunnelDetailResponse struct {
 	Response
 }
 
+type TunnelConfigurationResult struct {
+	TunnelID string              `json:"tunnel_id,omitempty"`
+	Config   TunnelConfiguration `json:"config,omitempty"`
+	Version  int                 `json:"version,omitempty"`
+}
+
 // TunnelConfigurationResponse is used for representing the API response payload for
 // a single tunnel.
 type TunnelConfigurationResponse struct {
-	Result TunnelConfigurationParams `json:"result"`
+	Result TunnelConfigurationResult `json:"result"`
 	Response
 }
 
@@ -151,9 +157,8 @@ type WarpRoutingConfig struct {
 type TunnelConfigurationParams struct {
 	AccountID    string              `json:"-"`
 	TunnelID     string              `json:"-"`
-	Config       TunnelConfiguration `json:"-"`
-	ConfigString string              `json:"config,omitempty"`
-	Version      int                 `json:"version,omitempty"`
+	Config       TunnelConfiguration `json:"config,omitempty"`
+	ConfigString string              `json:"-"`
 }
 
 type GetTunnelConfigurationParams struct {
