@@ -155,10 +155,9 @@ type WarpRoutingConfig struct {
 }
 
 type TunnelConfigurationParams struct {
-	AccountID    string              `json:"-"`
-	TunnelID     string              `json:"-"`
-	Config       TunnelConfiguration `json:"config,omitempty"`
-	ConfigString string              `json:"-"`
+	AccountID string              `json:"-"`
+	TunnelID  string              `json:"-"`
+	Config    TunnelConfiguration `json:"config,omitempty"`
 }
 
 type GetTunnelConfigurationParams struct {
@@ -317,15 +316,6 @@ func (api *API) UpdateTunnelConfiguration(ctx context.Context, params TunnelConf
 
 	if len(params.TunnelID) == 0 {
 		return TunnelConfigurationResult{}, ErrMissingTunnelID
-	}
-
-	if len(params.ConfigString) == 0 {
-		raw, err := json.Marshal(params.Config)
-		if err != nil {
-			return TunnelConfigurationResult{}, errors.Wrap(err, errMarshalError)
-		}
-
-		params.ConfigString = string(raw)
 	}
 
 	uri := fmt.Sprintf("/accounts/%s/cfd_tunnel/%s/configurations", params.AccountID, params.TunnelID)
