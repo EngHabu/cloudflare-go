@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/google/go-querystring/query"
 	"net/http"
 	"time"
 )
@@ -176,13 +177,25 @@ type TunnelListParams struct {
 // Tunnels lists all tunnels.
 //
 // API reference: https://api.cloudflare.com/#cloudflare-tunnel-list-cloudflare-tunnels
-func (api *API) Tunnels(ctx context.Context, rc *ResourceContainer, params TunnelListParams) ([]Tunnel, error) {
+func (api *API) Tunnels(ctx context.Context, rc *ResourceContainer, params TunnelListParams, opts ...ReqOption) ([]Tunnel, error) {
 	if rc.Identifier == "" {
 		return []Tunnel{}, ErrMissingAccountID
 	}
 
-	uri := buildURI(fmt.Sprintf("/accounts/%s/cfd_tunnel", rc.Identifier), params)
+	v, _ := query.Values(params)
+	opt := reqOption{
+		params: v,
+	}
 
+	for _, of := range opts {
+		of(&opt)
+	}
+
+	uri := buildURI(fmt.Sprintf("/accounts/%s/cfd_tunnel", rc.Identifier), opt)
+
+	if len(opt.params) > 0 {
+		uri = uri + "?" + opt.params.Encode()
+	}
 	res, err := api.makeRequestContext(ctx, http.MethodGet, uri, nil)
 	if err != nil {
 		return []Tunnel{}, err
